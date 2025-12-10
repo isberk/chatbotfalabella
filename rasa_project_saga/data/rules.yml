@@ -1,0 +1,23 @@
+version: "3.1"
+rules:
+
+- rule: Saludar inmediatamente
+  steps:
+  - intent: greet
+  - action: utter_greet
+
+
+- rule: Agradecer
+  steps:
+  - intent: agradecer
+  - action: utter_default_thanks
+
+- rule: Atender Consulta de Pedido
+  steps:
+  - intent: consultar_estado_pedido
+  - action: action_consultar_pedido
+
+- rule: Atender Consulta de Producto
+  steps:
+  - intent: consultar_producto
+  - action: action_consultar_stock

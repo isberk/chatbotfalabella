@@ -1,0 +1,61 @@
+version: "3.1"
+stories:
+
+# ====================================================================
+# 1. FLUJOS BÁSICOS
+# ====================================================================
+
+- story: Saludo y fin de conversación
+  steps:
+    - intent: greet
+    - action: utter_greet
+    - action: action_listen
+    - intent: goodbye
+    - action: utter_goodbye
+
+- story: El usuario agradece
+  steps:
+    - intent: agradecer
+    - action: utter_default_thanks
+    - action: action_listen
+
+# ====================================================================
+# 2. FLUJO COMPLETO DE CONSULTA DE PEDIDO (LA SOLUCIÓN AL FALLO)
+# ====================================================================
+
+- story: Consulta de Pedido con el número en la misma frase
+  steps:
+    - intent: consultar_estado_pedido
+    - action: action_consultar_pedido
+    - action: action_listen
+
+- story: Consulta de Pedido, el bot pide el número y el usuario responde (Solución al fallo)
+  steps:
+    - intent: consultar_estado_pedido # Ej: "ubica mi pedido"
+    - action: action_consultar_pedido # El código de la acción detecta que falta el slot y pide el número (utter_ask_pedido)
+    - action: action_listen           # El bot espera
+    - user: |
+        [101010](numero_pedido)     # El usuario ingresa el número (intent: inform)
+      intent: inform                  # El intent inform se usa para respuestas simples.
+    - action: action_consultar_pedido # La acción se ejecuta por segunda vez, ahora con el slot
+    - action: action_listen
+# ====================================================================
+# 3. FLUJO COMPLETO DE CONSULTA DE PRODUCTO
+# ====================================================================
+
+- story: Consulta de Producto con la entidad en la misma frase
+  steps:
+    - intent: consultar_producto
+    - action: action_consultar_stock
+    - action: action_listen
+
+- story: Consulta de Producto, el bot pide el nombre y el usuario responde
+  steps:
+    - intent: consultar_producto
+    - action: action_consultar_stock  # El código de la acción detecta que falta el slot y pide el nombre (utter_ask_producto)
+    - action: action_listen
+    - user: |
+        [Lavadora](producto)        # El usuario ingresa el producto (intent: inform)
+      intent: inform
+    - action: action_consultar_stock # La acción se ejecuta por segunda vez, ahora con el slot
+    - action: action_listen

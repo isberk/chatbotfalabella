@@ -1,0 +1,60 @@
+version: "3.1"
+
+intents:
+  - greet
+  - goodbye
+  - agradecer
+  - consultar_estado_pedido
+  - consultar_producto
+  - deny # Mantener si se usa en rules/stories
+
+entities:
+  - numero_pedido
+  - producto
+
+slots:
+  numero_pedido:
+    type: any
+    # 'initial_value: null' y 'auto_fill: false' ya no son necesarios 
+    # para el tipo 'any' y causaron errores.
+    mappings:
+      - type: custom
+
+  producto:
+    type: any
+    mappings:
+      - type: custom
+
+actions:
+  # Utterances (respuestas estáticas)
+  - utter_greet
+  - utter_goodbye
+  - utter_ask_pedido
+  - utter_ask_producto
+  - utter_default_thanks
+
+  # Acciones personalizadas (Python)
+  - action_consultar_pedido
+  - action_consultar_stock
+
+  # Se eliminó la acción 'n' ya que causó un error en el pasado
+
+responses:
+  utter_greet:
+    - text: "¡Hola! Soy tu Asistente Virtual de Saga Falabella. ¿En qué puedo ayudarte hoy?"
+
+  utter_goodbye:
+    - text: "¡Hasta luego! Recuerda que estoy disponible 24/7 para ayudarte."
+
+  utter_ask_pedido:
+    - text: "Por favor, ingresa el número de pedido para consultar el estado."
+
+  utter_ask_producto:
+    - text: "¿Qué producto o categoría estás buscando (Ej. 'Lavadora', 'Zapatos')?"
+
+  utter_default_thanks:
+    - text: "De nada, siempre es un placer ayudarte. ¿Hay algo más en lo que pueda asistirte?"
+
+session_config:
+  session_expiration_time: 60
+  carry_over_slots_to_new_session: true

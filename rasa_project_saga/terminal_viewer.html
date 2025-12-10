@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Asistente Virtual Saga Falabella S.A.</title>
+    <meta charset="utf-8">
+    <style>
+        /* Estilos CSS para Centrar y Formato de Falabella */
+        body { 
+            font-family: Arial, sans-serif; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            padding: 20px 0;
+            background-color: #f0f0f0; /* Fondo gris claro */
+        }
+        h1 {
+            color: #D6001C; /* Rojo Institucional Falabella */
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+        #chatbox-container {
+            width: 700px; /* Ancho del contenedor principal */
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            overflow: hidden;
+            background: white;
+        }
+        #chatbox { 
+            height: 400px; /* Altura de la caja de chat */
+            overflow-y: scroll; 
+            padding: 15px; 
+            background: #fdfdfd; /* Fondo casi blanco para el chat */
+        }
+        #input-area {
+            display: flex;
+            padding: 10px;
+            border-top: 1px solid #eee;
+        }
+        #userInput { 
+            flex-grow: 1;
+            padding: 10px; 
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin-right: 10px;
+        }
+        button {
+            padding: 10px 15px;
+            background-color: #D6001C; /* Color Rojo Falabella */
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #A00010; /* Rojo más oscuro al pasar el mouse */
+        }
+        /* Estilos de Mensaje */
+        .user-msg { 
+            text-align: right; 
+            background-color: #D8E6FF; /* Azul claro para el usuario */
+            padding: 10px 15px;
+            border-radius: 18px;
+            margin-left: 150px; /* Burbuja más corta */
+            margin-bottom: 10px;
+        }
+        .bot-msg { 
+            text-align: left; 
+            background-color: #FFEEED; /* Rosa pálido muy sutil para el bot (cercano al rojo) */
+            padding: 10px 15px;
+            border-radius: 18px;
+            margin-right: 150px;
+            margin-bottom: 10px;
+            color: #333; /* Texto del bot en negro fuerte */
+        }
+        .bot-msg strong {
+            color: #D6001C; /* Las palabras clave (pedidos, productos) en rojo */
+            font-weight: 700;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>ASISTENTE VIRTUAL SAGA FALABELLA S.A.</h1>
+
+    <div id="chatbox-container">
+        <div id="chatbox"></div>
+        <div id="input-area">
+            <input type="text" id="userInput" placeholder="Escribe tu consulta (ej: hola o cual es el estado del pedido 123456)">
+            <button onclick="sendMessage()">Enviar</button>
+        </div>
+    </div>
+
+    <script>
+        // Usaremos la última IP conocida: 172.30.178.107
+        const RASA_API = 'http://localhost:5005/webhooks/rest/webhook'; 
+
+        function displayMessage(sender, message) {
+            const chatbox = document.getElementById('chatbox');
+            const msgElement = document.createElement('div');
+            
+            msgElement.innerHTML = message;
+
+            if (sender === 'user') {
+                msgElement.className = 'user-msg';
+            } else {
+                msgElement.className = 'bot-msg';
+            }
+            chatbox.appendChild(msgElement);
+            chatbox.scrollTop = chatbox.scrollHeight;
+        }
+
+        async function sendMessage() {
+            const userInput = document.getElementById('userInput');
+            const userMessage = userInput.value;
+
+            if (userMessage.trim() === "") return;
+
+            displayMessage('user', userMessage);
+            userInput.value = '';
+
+            try {
+                const response = await fetch(RASA_API, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ sender: 'web_user', message: userMessage })
+                });
+
+                const data = await response.json();
+                
+                if (data && data.length > 0) {
+                    data.forEach(msg => {
+                        if (msg.text) {
+                            // Reemplazar **negrita** por <strong> para HTML
+                            const formattedText = msg.text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+                            displayMessage('bot', formattedText);
+                        }
+                    });
+                } else {
+                    displayMessage('bot', 'Error: Bot no respondió (Verifica Action Server 5055).');
+                }
+
+            } catch (error) {
+                console.error('Error al conectar con Rasa:', error);
+                displayMessage('bot', 'Error de conexión: Verifica que Rasa Core esté activo en 5005.');
+            }
+        }
+        
+        // Inicializar el bot con un saludo al cargar la página
+        window.onload = function() {
+             displayMessage('bot', '¡Hola! Soy tu Asistente Virtual de Saga Falabella. ¿En qué puedo ayudarte hoy?');
+             document.getElementById('userInput').addEventListener('keypress', function (e) {
+                if (e.key === 'Enter') {
+                    sendMessage();
+                }
+            });
+        };
+    </script>
+</body>
+</html>

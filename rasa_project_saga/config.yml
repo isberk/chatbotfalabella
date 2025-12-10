@@ -1,0 +1,26 @@
+# config.yml
+language: es
+
+pipeline:
+# Tokenización (Divide el texto)
+- name: WhitespaceTokenizer
+# Vectorización (Convierte palabras a números)
+- name: CountVectorsFeaturizer
+# Clasificación de Intención y Extracción de Entidades (DIETClassifier)
+- name: DIETClassifier
+  epochs: 100
+# Normalización de Sinónimos
+- name: EntitySynonymMapper
+# Selector de Respuestas (Para FAQs)
+- name: ResponseSelector
+  epochs: 100
+
+policies:
+# Memoriza diálogos repetitivos (MemoizationPolicy)
+- name: MemoizationPolicy
+# Reglas Fijas (RulePolicy)
+- name: RulePolicy
+# Predicción Contextual con Deep Learning (TEDPolicy)
+- name: TEDPolicy
+  epochs: 100
+assistant_id: 20251130-125026-cyan-saturation

@@ -1,0 +1,52 @@
+version: "3.1"
+nlu:
+# =================================================================
+# 1. INTENCIONES BÁSICAS
+# =================================================================
+- intent: greet
+  examples: |
+    - hola
+    - buenos días
+    - qué tal
+
+- intent: goodbye
+  examples: |
+    - adiós
+    - chao
+    - hasta luego
+
+- intent: agradecer
+  examples: |
+    - gracias
+    - muchas gracias
+
+# =================================================================
+# 2. INTENCIONES DE SERVICIO AL CLIENTE (Reforzadas)
+# =================================================================
+- intent: consultar_estado_pedido
+  examples: |
+    - quiero saber donde esta mi pedido [123456](numero_pedido)
+    - cuál es el estado de mi compra [987654](numero_pedido)
+    - rastrear mi orden con el número [101010](numero_pedido)
+    - ¿dónde está mi pedido?
+    - ¿cuál es el día estimado de llegada?
+    - mi pedido está demorado, ¿qué hago?
+    - necesito el tracking de mi paquete
+    - cuánto tiempo falta para que llegue
+    - ¿ya enviaron mi paquete?
+    - ubicame mi pedido
+    - informacion de mi pedido
+
+- intent: consultar_producto
+  examples: |
+    - quiero información de [lavadora](producto)
+    - necesito saber de [smart tv](producto)
+    - quiero información de [zapatos](producto)
+    - tienen [laptops](producto) en stock?
+    - dame datos sobre [ropa](producto)
+    - quiero ver las ofertas de [juguetes](producto)
+    - tienen algún descuento en [refrigeradoras](producto)
+    - ¿tienen [zapatillas](producto) en stock?
+    - ¿tienen [televisores](producto) en stock?
+    - quiero saber si tienen [refrigeradoras](producto)
+    - ¿hay stock de [zapatillas](producto)?
